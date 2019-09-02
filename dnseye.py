@@ -3,6 +3,7 @@ from dns import resolver
 from sys import argv 
 from optparse import OptionParser as opt
 from lib import *
+from whois import whois
 
 
 
@@ -15,6 +16,7 @@ def main(args=[]):
 	op.add_option("-n", "--not", dest="no", default="", help="If you don't want to check some records, you should use --not notThisrecord1,notThisrecord2")
 	op.add_option("-p", "--doNotPrint", action="store_false", dest="print", default=True, help="Use this flag if you don't want to print the output in the console.")
 	op.add_option("-l", "--listRecords", action="store_true", dest="listRecords", help="Display a list with all DNS records and their functions.")
+	op.add_option("-c", "--dontcheckup", action="store_false", dest="checkup", default=True, help="Don't check if the DNS is up, this will speed up the program.")
 	(o, args) = op.parse_args()
 	print("\n\n\n")
 	if not o.dns and not o.listRecords:
@@ -37,8 +39,24 @@ def main(args=[]):
 	dnslist = o.dns.split(",")
 	plschange = []
 	for dns in dnslist:
-		if dns[:4] == "www.":
-			dnslist[dnslist.index(dns)] = dns[4:]
+		if o.checkup:
+			try:
+				whois(dns)
+			except:
+				text = "{} is not up.".format(dns)
+				continue
+			else:
+				text = "{} is up.".format(dns)
+			finally:
+				if o.print:
+					print(text)
+				if o.save:
+					log.write("{}\n".format(text))
+			if dns[:4] == "www.":
+				dnslist[dnslist.index(dns)] = dns[4:]
+				dns = dns[4:]
+
+		
 
 
 	if o.listRecords:

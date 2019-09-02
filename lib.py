@@ -6,9 +6,11 @@ def banner():
 		 _______
 		|	\\	  
 		|    _   \\   
-		|   | |   \\  
-		|   |_|	   | N S  E Y E    
-		|	  /   
+		|   | |   |
+		|   | |   |
+		|   | |	  |  
+		|   |_|	  | N S  E Y E    
+		|	  |
 		|	 /	  
 		|_______/     		''')
 	print("\n\n		[+]Github: https://github.com/binarioGH")
