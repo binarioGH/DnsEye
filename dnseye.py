@@ -17,6 +17,7 @@ def main(args=[]):
 	op.add_option("-p", "--doNotPrint", action="store_false", dest="print", default=True, help="Use this flag if you don't want to print the output in the console.")
 	op.add_option("-l", "--listRecords", action="store_true", dest="listRecords", help="Display a list with all DNS records and their functions.")
 	op.add_option("-c", "--dontcheckup", action="store_false", dest="checkup", default=True, help="Don't check if the DNS is up, this will speed up the program.")
+	op.add_option("-w", "--whoislog", action="store_true", dest="whois", default=False, help="Get information from a whois query.")
 	(o, args) = op.parse_args()
 	print("\n\n\n")
 	if not o.dns and not o.listRecords:
@@ -37,21 +38,30 @@ def main(args=[]):
 
 	o.dns = o.dns.lower()
 	dnslist = o.dns.split(",")
-	plschange = []
 	for dns in dnslist:
-		if o.checkup:
+		if o.checkup or o.whois:
 			try:
-				whois(dns)
+				whoislog = whois(dns)
 			except:
-				text = "{} is not up.".format(dns)
+				text = "**  {} is not up.".format(dns)
+				dnslist.remove(dns)
 				continue
 			else:
-				text = "{} is up.".format(dns)
+				text = "**  {} is up.".format(dns)
+				if o.whois:
+					for info in whoislog:
+						wtext ="	* {}:\n 		-{}".format(info, whoislog[info])
+						if o.print:
+							print(wtext)
+						if o.save:
+							log.write("{}\n".format(wtext))
+			
 			finally:
 				if o.print:
 					print(text)
 				if o.save:
 					log.write("{}\n".format(text))
+
 			if dns[:4] == "www.":
 				dnslist[dnslist.index(dns)] = dns[4:]
 				dns = dns[4:]
