@@ -1,19 +1,23 @@
 #-*-coding: utf-8-*-
 from time import strftime
 
-def banner():
-	print('''
+def banner(p=True):
+	text = '''
 		 _______
-		|	\\	  
+		|		\\	  
 		|    _   \\   
 		|   | |   |
 		|   | |   |
 		|   | |	  |  
 		|   |_|	  | N S  E Y E    
-		|	  |
-		|	 /	  
-		|_______/     		''')
-	print("\n\n		[+]Github: https://github.com/binarioGH")
+		|	  	  |
+		|	 	 /	  
+		|_______/     		'''
+	text += "\n\n		[+]Github: https://github.com/binarioGH\n\n"
+	if p: 
+		print(text)
+	else:
+		return text
 
 
 def getText(query, record):

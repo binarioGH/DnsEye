@@ -26,6 +26,8 @@ def main(args=[]):
 
 	if o.save:
 		log = open(o.filename, "w")
+		bnner = banner(p=False)
+		log.write("{}\n".format(bnner))
 
 	o.only = o.only.upper()
 	o.no = o.no.upper()
@@ -79,6 +81,7 @@ def main(args=[]):
 		if o.save:
 			log.write("\n{}".format(text))
 	else:
+		anscount = 0
 		for dns in dnslist:
 			text = "\n\n****  Starting analysis on {}\n\n".format(dns)
 			if o.print:
@@ -95,10 +98,25 @@ def main(args=[]):
 					text += "\n 	{} did not answared.".format(record)
 				else:
 					text = getText(query, record)
+					anscount += 1
 				if o.print:
 					print(text)
 				if o.save:
 					log.write(text + "\n")
+			text = "\n\n\n||||	{} records answared.".format(anscount)
+
+			if anscount == 0:
+				if recordList == ["", ""]:
+					text += "\n 		-Maybe you should add some records to the list."
+				else:
+					text += "\n 		- Check your internet connection."
+					text += "\n 		- Check if the DNS is up."
+			elif anscount == len(recordList):
+				text += "\n 		- Nice, every single records answared!!!!!"
+			if o.print:
+				print(text)
+			if o.save:
+				log.write(text + "\n")
 	if o.save:
 		log.close() 
 
