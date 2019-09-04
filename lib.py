@@ -70,6 +70,26 @@ RECORDS = {
 	"TXT":  "Text Record",
 	"URI":  "Uniform Resource Identifier"
 }
+WHOISCMD = (
+	"domain_name",
+	"registrar",
+	"whois_server",
+	"referral_url",
+	"update_date",
+	"creation_date",
+	"expiration_date",
+	"name_servers",
+	"status",
+	"emails",
+	"dnssec",
+	"name",
+	"org",
+	"address",
+	"city",
+	"state",
+	"zipcode",
+	"country"
+	)
 
 getDate = lambda: strftime("%m-%d-%y-%H-%M-%S")
 loadRecords = lambda: list(RECORDS)

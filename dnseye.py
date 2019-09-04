@@ -16,8 +16,11 @@ def main(args=[]):
 	op.add_option("-n", "--not", dest="no", default="", help="If you don't want to check some records, you should use --not notThisrecord1,notThisrecord2")
 	op.add_option("-p", "--doNotPrint", action="store_false", dest="print", default=True, help="Use this flag if you don't want to print the output in the console.")
 	op.add_option("-l", "--listRecords", action="store_true", dest="listRecords", help="Display a list with all DNS records and their functions.")
-	op.add_option("-c", "--dontcheckup", action="store_false", dest="checkup", default=True, help="Don't check if the DNS is up, this will speed up the program.")
+	op.add_option("-u", "--dontcheckup", action="store_false", dest="checkup", default=True, help="Don't check if the DNS is up, this will speed up the program.")
 	op.add_option("-w", "--whoislog", action="store_true", dest="whois", default=False, help="Get information from a whois query.")
+	op.add_option("-v", "--whoislcmdlist", action="store_true", dest="whoiscmd", default=False, help="Display all whois commands.")	
+	op.add_option("-c", "--whoiscommands", dest="onlywhois", default="all", help="Select just a few whois commands, so the script don't print out every single one.")
+	op.add_option("-m", "--whoisnotcommands", dest="notwhois", default="", help="Avoid getting the output of some whois commands.")
 	(o, args) = op.parse_args()
 	print("\n\n\n")
 	if not o.dns and not o.listRecords:
@@ -45,13 +48,23 @@ def main(args=[]):
 			try:
 				whoislog = whois(dns)
 			except:
-				text = "**  {} is not up.".format(dns)
+				text = "\n\n**  {} is not up.\n\n".format(dns)
 				dnslist.remove(dns)
 				continue
 			else:
-				text = "**  {} is up.".format(dns)
+				text = "\n\n**  {} is up.\n\n".format(dns)
 				if o.whois:
-					for info in whoislog:
+					o.onlywhois = o.onlywhois.lower()
+					wcmd = o.onlywhois.split(",") #wcmd = whois commands
+					o.notwhois = o.notwhois.lower()
+					nwcmd = o.notwhois.split(",") #nwcmd = not whois commands
+					if wcmd[0] == "all":
+						whoislist = list(whoislog)
+					else: 
+						whoislist = wcmd
+					for info in whoislist:
+						if info in nwcmd:
+							continue
 						wtext ="	* {}:\n 		-{}".format(info, whoislog[info])
 						if o.print:
 							print(wtext)
@@ -80,6 +93,16 @@ def main(args=[]):
 		print(text)
 		if o.save:
 			log.write("\n{}".format(text))
+	if o.whoiscmd:
+		text = "\n\n\n- Whois Commands:\n"
+		for cmd in WHOISCMD:
+			text += "	**{}\n".format(cmd)
+		if o.print:
+			print(text)
+		if o.save:
+			log.write(text)
+
+
 	else:
 		anscount = 0
 		for dns in dnslist:
